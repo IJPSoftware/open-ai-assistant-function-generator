@@ -1,0 +1,17 @@
+[
+  {
+    "name": "GetUserInfo",
+    "description": "* this gets user informations",
+    "parameters": {}
+  },
+  {
+    "name": "SaveUserInfo",
+    "description": "",
+    "parameters": {}
+  },
+  {
+    "name": "ShowWorkoutPlan",
+    "description": "* Retrieve the saved user information like age, height and weight",
+    "parameters": {}
+  }
+]

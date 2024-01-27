@@ -4,7 +4,8 @@ import { Program, JsonSchemaGenerator } from 'typescript-json-schema';
 function generateJsonSchema(tsFilePath: string, interfaceName: string): TJS.Definition | undefined {
   // Specify TypeScript compiler options
   const compilerOptions: TJS.CompilerOptions = {
-    strictNullChecks: true
+    strictNullChecks: true,
+    skipLibCheck: true
   };
 
   // Generate a program from the given file path

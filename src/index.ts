@@ -45,7 +45,7 @@ const dirPath = process.argv[2]; // Get directory path from command line argumen
 const outputPath = process.argv[3]; // Get output file path from command line argument
 
 if (!dirPath || !outputPath) {
-    console.error("Please provide a directory path and an output file path.");
+    console.error("1.0.8 Please provide a directory path and an output file path.");
     process.exit(1);
 }
 
@@ -55,5 +55,5 @@ listFilesInDirectory(dirPath)
         console.log(`Output written to ${outputPath}`);
     })
     .catch(error => {
-        console.error('An error occurred:', error);
+        console.error('1.0.6 An error occurred:', error);
     });

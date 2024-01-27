@@ -1,6 +1,6 @@
 {
   "name": "open-ai-assistant-function-generator",
-  "version": "1.0.2",
+  "version": "1.0.6",
   "description": "Generate Open AI function schema based on ts files with functions",
   "main": "dist/index.js",
   "scripts": {
@@ -15,11 +15,10 @@
   "author": "Ivan",
   "license": "ISC",
   "dependencies": {
-    "extract-documentation-comments": "^0.4.2"
+    "ts-json-schema-generator": "^1.5.0"
   },
   "devDependencies": {
-    "typescript": "^5.3.3",
-    "typescript-json-schema": "^0.62.0",
     "ts-node": "^10.9.2"
-  }
+  },
+  "resolutions": {}
 }

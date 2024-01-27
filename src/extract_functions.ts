@@ -1,5 +1,4 @@
 import * as ts from 'typescript';
-import { generateJsonSchema } from './generate_schema';
 
 function getFunctionComments(node: ts.Node, sourceFile: ts.SourceFile): string {
   let docComments: string[] = [];
