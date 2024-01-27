@@ -1,20 +1,25 @@
 {
   "name": "open-ai-assistant-function-generator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Generate Open AI function schema based on ts files with functions",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "ts-node index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
   },
   "bin": {
-    "openai-generator": "./index.js"
+    "openai-generator": "./dist/index.js"
   },
   "author": "Ivan",
   "license": "ISC",
   "dependencies": {
-    "extract-documentation-comments": "^0.4.2",
+    "extract-documentation-comments": "^0.4.2"
+  },
+  "devDependencies": {
     "typescript": "^5.3.3",
-    "typescript-json-schema": "^0.62.0"
+    "typescript-json-schema": "^0.62.0",
+    "ts-node": "^10.9.2"
   }
 }
