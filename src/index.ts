@@ -30,8 +30,8 @@ async function listFilesInDirectory(dirPath: string): Promise<any[]> {
                 "description": fn.comments,
                 "parameters": {
                     type: jsonSchema?.type,
-                    properties: jsonSchema?.properties,
-                    required: jsonSchema?.required,
+                    properties: jsonSchema?.properties || {},
+                    required: jsonSchema?.required || [],
                 }
             };
         });
