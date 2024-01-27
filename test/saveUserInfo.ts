@@ -19,6 +19,7 @@ export interface SaveUserInfoParams {
    * The age of the user
    */
   age: string;
+  car(asd: string): string
 }
 
 export function SaveUserInfo(params: SaveUserInfoParams) {}

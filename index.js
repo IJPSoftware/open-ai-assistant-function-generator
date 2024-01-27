@@ -1,94 +1,54 @@
-const ts = require('typescript');
-const TJS = require('typescript-json-schema');
+const fs = require('fs');
+const path = require('path');
+const { generateJsonSchema } = require('./generate_schema');
+const { extractFunctionDetails } = require('./extract_functions');
 
-// input = folder = ./test
-// output = JSON file with []Functions
+async function listFilesInDirectory(dirPath) {
+  try {
+    const files = fs.readdirSync(dirPath);
+    let functions = [];
 
-function getCompilerOptions() {
-  return {
-    strictNullChecks: true,
-    esModuleInterop: true,
-    // Add other necessary compiler options here
-  };
-}
-
-function extractFunctionSignaturesToJsonSchema(fileName) {
-  console.log("Preparing to generate schema for file:", fileName);
-
-  // Prepare to generate a schema
-  const program = TJS.getProgramFromFiles([fileName], getCompilerOptions());
-  const generator = TJS.buildGenerator(program, { required: true });
-
-  if (!generator) {
-    console.error("Could not create generator");
-    return;
-  }
-
-  console.log("Generator created, processing file...");
-
-  // Traverse the AST and extract function signatures
-  const sourceFile = program.getSourceFile(fileName);
-
-  if (!sourceFile) {
-    console.error(`Failed to load source file: ${fileName}`);
-    return;
-  }
-
-  console.log(`Successfully loaded file: ${fileName}`);
-  const functionSchemas = [];
-
-  sourceFile.forEachChild((node) => {
-    console.log("Node type:", ts.SyntaxKind[node.kind]); // Log the type of each node
-    if (ts.isFunctionDeclaration(node)) {
-      console.log("Processing function declaration node");
-
-      const functionName = node.name ? node.name.text : "anonymous";
-      console.log(`Found function: ${functionName}`);
-
-      // Extract parameter types
-      const parameters = node.parameters.map(p => {
-        const typeName = p.type ? p.type.getText() : 'any';
-        let schema = {};
-        try {
-          schema = generator.getSchemaForSymbol(typeName);
-          console.log(`Generated schema for parameter type: ${typeName}`);
-        } catch (error) {
-          console.error(`Error generating schema for parameter ${typeName}: ${error}`);
-        }
-        return { name: p.name.getText(), schema };
-      });
-
-      // Extract return type
-      const returnTypeName = node.type ? node.type.getText() : 'void';
-      let returnTypeSchema = {};
-      try {
-        returnTypeSchema = generator.getSchemaForSymbol(returnTypeName);
-        console.log(`Generated schema for return type: ${returnTypeName}`);
-      } catch (error) {
-        console.error(`Error generating schema for return type ${returnTypeName}: ${error}`);
-      }
-
-      functionSchemas.push({
-        name: functionName,
-        parameters,
-        returnType: returnTypeSchema
-      });
-    } else {
-      console.log("Skipping non-function node");
+    for (const file of files) {
+      const filePath = path.join(dirPath, file);
+      let fns = extractFunctionDetails(filePath);
+      functions = [...functions, ...fns.functions];
     }
+
+    return functions.map(fn => {
+      const {
+        type,
+        properties,
+        required,
+      } = generateJsonSchema(fn.fileName, fn.paramType)
+      return {
+        "name": fn.functionName,
+        "description": fn.comments,
+        "parameters": {
+          type,
+          properties,
+          required,
+        }
+      }
+    });
+  } catch (error) {
+    console.error(`Error reading directory ${dirPath}: ${error.message}`);
+    return []; // Return an empty array in case of an error
+  }
+}
+
+const dirPath = process.argv[2]; // Get directory path from command line argument
+const outputPath = process.argv[3]; // Get output file path from command line argument
+
+if (!dirPath || !outputPath) {
+  console.error("Please provide a directory path and an output file path.");
+  process.exit(1);
+}
+
+listFilesInDirectory(dirPath)
+  .then(functions => {
+    fs.writeFileSync(outputPath, JSON.stringify(functions, null, 2), 'utf8');
+    console.log(`Output written to ${outputPath}`);
+  })
+  .catch(error => {
+    console.error('An error occurred:', error);
   });
-
-  return functionSchemas;
-}
-
-// Replace with the path to your TypeScript file
-const tsFileName = './test/getUserInfo.ts'; // Ensure this path is correct
-console.log("Reading TypeScript file:", tsFileName);
-
-try {
-  const functionSchemas = extractFunctionSignaturesToJsonSchema(tsFileName);
-  console.log("Extracted Function Schemas:");
-  console.log(JSON.stringify(functionSchemas, null, 2));
-} catch (error) {
-  console.error(`An error occurred: ${error}`);
-}
