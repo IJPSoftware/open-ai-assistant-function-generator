@@ -1,6 +1,6 @@
 {
   "name": "open-ai-assistant-function-generator",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Generate Open AI function schema based on ts files with functions",
   "main": "dist/index.js",
   "scripts": {
